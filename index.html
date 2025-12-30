@@ -526,8 +526,8 @@
             }
 
             .round-container {
-                transform: scale(0.45);
-                margin: -15px 0;
+                transform: scale(0.35);
+                margin: -20px 0;
             }
 
             .score-value {
@@ -686,12 +686,29 @@
 
     <script>
         // Game state
-        const state = {
+        let state = {
             attacker: { vp: 0, cp: 0 },
             defender: { vp: 0, cp: 0 },
             round: 1,
             switched: false
         };
+
+        // Load state from localStorage
+        function loadState() {
+            const saved = localStorage.getItem('40k-score-tracker');
+            if (saved) {
+                try {
+                    state = JSON.parse(saved);
+                } catch (e) {
+                    console.log('Could not load saved state');
+                }
+            }
+        }
+
+        // Save state to localStorage
+        function saveState() {
+            localStorage.setItem('40k-score-tracker', JSON.stringify(state));
+        }
 
         // Haptic feedback
         function vibrate() {
@@ -707,6 +724,19 @@
             document.getElementById('defender-vp').textContent = state.defender.vp;
             document.getElementById('defender-cp').textContent = state.defender.cp;
             document.getElementById('round').textContent = state.round;
+
+            // Apply switched state
+            const defenderSide = document.getElementById('defender-side');
+            const attackerSide = document.getElementById('attacker-side');
+            if (state.switched) {
+                defenderSide.style.order = '2';
+                attackerSide.style.order = '1';
+            } else {
+                defenderSide.style.order = '1';
+                attackerSide.style.order = '2';
+            }
+
+            saveState();
         }
 
         // Change score
@@ -746,6 +776,7 @@
             state.defender.vp = 0;
             state.defender.cp = 0;
             state.round = 1;
+            state.switched = false;
             updateDisplay();
             hideResetConfirm();
         }
@@ -754,20 +785,11 @@
         function switchSides() {
             vibrate();
             state.switched = !state.switched;
-
-            const defenderSide = document.getElementById('defender-side');
-            const attackerSide = document.getElementById('attacker-side');
-
-            if (state.switched) {
-                defenderSide.style.order = '2';
-                attackerSide.style.order = '1';
-            } else {
-                defenderSide.style.order = '1';
-                attackerSide.style.order = '2';
-            }
+            updateDisplay();
         }
 
         // Initialize
+        loadState();
         updateDisplay();
     </script>
 </body>
