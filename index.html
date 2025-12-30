@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>40K Score Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --attacker-color: #8B0000;
+            --defender-color: #228B22;
+            --bg-color: #1a1a1a;
+            --text-color: #000;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            user-select: none;
+        }
+
+        /* Header with round counter */
+        .header {
+            background-color: #2d2d2d;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .round-display {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .header-btn {
+            background: #444;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        .header-btn:active {
+            background: #555;
+        }
+
+        .reset-btn {
+            background: #666;
+        }
+
+        /* Main score area */
+        .scores-container {
+            display: flex;
+            flex: 1;
+        }
+
+        .player-side {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .defender-side {
+            background-color: var(--defender-color);
+        }
+
+        .attacker-side {
+            background-color: var(--attacker-color);
+        }
+
+        .score-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+        }
+
+        .score-section:last-child {
+            border-bottom: none;
+        }
+
+        .score-label {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .score-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .score-btn {
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-color);
+            border: none;
+            width: 60px;
+            height: 60px;
+            font-size: 2.5rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .score-btn:active {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .score-value {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--text-color);
+            min-width: 100px;
+            text-align: center;
+        }
+
+        /* Footer with switch button */
+        .footer {
+            background-color: #2d2d2d;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .switch-btn {
+            background: #444;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            min-height: 44px;
+        }
+
+        .switch-btn:active {
+            background: #555;
+        }
+
+        /* Responsive - stack on mobile */
+        @media (max-width: 600px) {
+            .scores-container {
+                flex-direction: column;
+            }
+
+            .score-value {
+                font-size: 3rem;
+            }
+
+            .score-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 2rem;
+            }
+
+            .score-label {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <span class="round-display">Round: <span id="round">1</span></span>
+        <button class="header-btn" onclick="changeRound(-1)">-</button>
+        <button class="header-btn" onclick="changeRound(1)">+</button>
+        <button class="header-btn reset-btn" onclick="resetGame()">Reset</button>
+    </header>
+
+    <main class="scores-container">
+        <section class="player-side defender-side" id="defender-side">
+            <div class="score-section">
+                <span class="score-label">Defender VP</span>
+                <div class="score-controls">
+                    <button class="score-btn" onclick="changeScore('defender', 'vp', -1)">-</button>
+                    <span class="score-value" id="defender-vp">0</span>
+                    <button class="score-btn" onclick="changeScore('defender', 'vp', 1)">+</button>
+                </div>
+            </div>
+            <div class="score-section">
+                <span class="score-label">Defender CP</span>
+                <div class="score-controls">
+                    <button class="score-btn" onclick="changeScore('defender', 'cp', -1)">-</button>
+                    <span class="score-value" id="defender-cp">0</span>
+                    <button class="score-btn" onclick="changeScore('defender', 'cp', 1)">+</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="player-side attacker-side" id="attacker-side">
+            <div class="score-section">
+                <span class="score-label">Attacker VP</span>
+                <div class="score-controls">
+                    <button class="score-btn" onclick="changeScore('attacker', 'vp', -1)">-</button>
+                    <span class="score-value" id="attacker-vp">0</span>
+                    <button class="score-btn" onclick="changeScore('attacker', 'vp', 1)">+</button>
+                </div>
+            </div>
+            <div class="score-section">
+                <span class="score-label">Attacker CP</span>
+                <div class="score-controls">
+                    <button class="score-btn" onclick="changeScore('attacker', 'cp', -1)">-</button>
+                    <span class="score-value" id="attacker-cp">0</span>
+                    <button class="score-btn" onclick="changeScore('attacker', 'cp', 1)">+</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <button class="switch-btn" onclick="switchSides()">Switch Sides</button>
+    </footer>
+
+    <script>
+        // Game state
+        const state = {
+            attacker: { vp: 0, cp: 0 },
+            defender: { vp: 0, cp: 0 },
+            round: 1,
+            switched: false
+        };
+
+        // Haptic feedback
+        function vibrate() {
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+        }
+
+        // Update display
+        function updateDisplay() {
+            document.getElementById('attacker-vp').textContent = state.attacker.vp;
+            document.getElementById('attacker-cp').textContent = state.attacker.cp;
+            document.getElementById('defender-vp').textContent = state.defender.vp;
+            document.getElementById('defender-cp').textContent = state.defender.cp;
+            document.getElementById('round').textContent = state.round;
+        }
+
+        // Change score
+        function changeScore(player, type, delta) {
+            vibrate();
+            const newValue = state[player][type] + delta;
+            if (newValue >= 0) {
+                state[player][type] = newValue;
+                updateDisplay();
+            }
+        }
+
+        // Change round
+        function changeRound(delta) {
+            vibrate();
+            const newRound = state.round + delta;
+            if (newRound >= 1) {
+                state.round = newRound;
+                updateDisplay();
+            }
+        }
+
+        // Reset game
+        function resetGame() {
+            vibrate();
+            state.attacker.vp = 0;
+            state.attacker.cp = 0;
+            state.defender.vp = 0;
+            state.defender.cp = 0;
+            state.round = 1;
+            updateDisplay();
+        }
+
+        // Switch sides (swap colors)
+        function switchSides() {
+            vibrate();
+            state.switched = !state.switched;
+
+            const defenderSide = document.getElementById('defender-side');
+            const attackerSide = document.getElementById('attacker-side');
+
+            if (state.switched) {
+                defenderSide.classList.remove('defender-side');
+                defenderSide.classList.add('attacker-side');
+                attackerSide.classList.remove('attacker-side');
+                attackerSide.classList.add('defender-side');
+            } else {
+                defenderSide.classList.remove('attacker-side');
+                defenderSide.classList.add('defender-side');
+                attackerSide.classList.remove('defender-side');
+                attackerSide.classList.add('attacker-side');
+            }
+        }
+
+        // Initialize
+        updateDisplay();
+    </script>
+</body>
+</html>
