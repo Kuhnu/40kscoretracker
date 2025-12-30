@@ -517,50 +517,59 @@
         /* Landscape mode on mobile - short viewport */
         @media (max-height: 500px) and (orientation: landscape) {
             .header {
-                padding: 4px 10px;
+                padding: 2px 10px;
             }
 
             .round-container {
-                transform: scale(0.8);
+                transform: scale(0.55);
+                margin: -10px 0;
             }
 
             .score-value {
-                font-size: 7rem;
-            }
-
-            .cp-section .score-value {
                 font-size: 4.5rem;
             }
 
+            .cp-section .score-value {
+                font-size: 3rem;
+            }
+
             .score-label {
-                font-size: 0.85rem;
-                top: 8px;
-                letter-spacing: 3px;
+                font-size: 0.7rem;
+                top: 3px;
+                letter-spacing: 2px;
             }
 
             .cp-section .score-label {
-                font-size: 0.75rem;
-                top: 5px;
+                font-size: 0.6rem;
+                top: 2px;
             }
 
             .click-zone-indicator {
-                font-size: 2rem;
+                font-size: 1.2rem;
+                opacity: 0.08;
             }
 
             .player-side::before,
             .player-side::after {
-                width: 30px;
-                height: 30px;
-                border-width: 3px;
+                width: 20px;
+                height: 20px;
+                border-width: 2px;
+                top: 5px;
+            }
+
+            .defender-side::after,
+            .attacker-side::after {
+                bottom: 5px;
             }
 
             .footer {
-                padding: 8px 0;
+                padding: 5px 0;
             }
 
             .footer-btn {
-                padding: 10px 15px;
-                font-size: 0.85rem;
+                padding: 8px 10px;
+                font-size: 0.75rem;
+                letter-spacing: 1px;
             }
         }
     </style>
