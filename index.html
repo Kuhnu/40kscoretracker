@@ -517,59 +517,81 @@
         /* Landscape mode on mobile - short viewport */
         @media (max-height: 500px) and (orientation: landscape) {
             .header {
-                padding: 2px 10px;
+                padding: 0;
+                background: linear-gradient(180deg,
+                    rgba(30,30,30,0.95) 0%,
+                    rgba(10,10,10,0.95) 100%);
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                box-shadow: 0 2px 15px rgba(0,0,0,0.8);
             }
 
             .round-container {
-                transform: scale(0.55);
-                margin: -10px 0;
+                transform: scale(0.45);
+                margin: -15px 0;
             }
 
             .score-value {
-                font-size: 4.5rem;
+                font-size: 6rem;
             }
 
             .cp-section .score-value {
-                font-size: 3rem;
+                font-size: 4rem;
             }
 
             .score-label {
-                font-size: 0.7rem;
-                top: 3px;
+                font-size: 0.65rem;
+                top: 2px;
                 letter-spacing: 2px;
             }
 
             .cp-section .score-label {
-                font-size: 0.6rem;
-                top: 2px;
+                font-size: 0.55rem;
+                top: 1px;
             }
 
             .click-zone-indicator {
-                font-size: 1.2rem;
-                opacity: 0.08;
+                font-size: 1.5rem;
+                opacity: 0.06;
             }
 
             .player-side::before,
             .player-side::after {
-                width: 20px;
-                height: 20px;
+                width: 15px;
+                height: 15px;
                 border-width: 2px;
-                top: 5px;
+                top: 3px;
             }
+
+            .defender-side::before { left: 3px; }
+            .attacker-side::before { right: 3px; }
 
             .defender-side::after,
             .attacker-side::after {
-                bottom: 5px;
+                bottom: 3px;
             }
 
+            .defender-side::after { left: 3px; }
+            .attacker-side::after { right: 3px; }
+
             .footer {
-                padding: 5px 0;
+                padding: 0;
+                background: linear-gradient(0deg,
+                    rgba(30,30,30,0.95) 0%,
+                    rgba(10,10,10,0.95) 100%);
+                border-top: 1px solid rgba(255,255,255,0.1);
+                box-shadow: 0 -2px 15px rgba(0,0,0,0.8);
             }
 
             .footer-btn {
-                padding: 8px 10px;
-                font-size: 0.75rem;
+                padding: 6px 8px;
+                font-size: 0.65rem;
                 letter-spacing: 1px;
+                background: transparent;
+                box-shadow: none;
+            }
+
+            .footer-btn:first-child {
+                border-right: 1px solid rgba(255,255,255,0.1);
             }
         }
     </style>
