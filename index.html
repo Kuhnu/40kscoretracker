@@ -513,6 +513,56 @@
                 font-size: 2.8rem;
             }
         }
+
+        /* Landscape mode on mobile - short viewport */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .header {
+                padding: 4px 10px;
+            }
+
+            .round-container {
+                transform: scale(0.8);
+            }
+
+            .score-value {
+                font-size: 7rem;
+            }
+
+            .cp-section .score-value {
+                font-size: 4.5rem;
+            }
+
+            .score-label {
+                font-size: 0.85rem;
+                top: 8px;
+                letter-spacing: 3px;
+            }
+
+            .cp-section .score-label {
+                font-size: 0.75rem;
+                top: 5px;
+            }
+
+            .click-zone-indicator {
+                font-size: 2rem;
+            }
+
+            .player-side::before,
+            .player-side::after {
+                width: 30px;
+                height: 30px;
+                border-width: 3px;
+            }
+
+            .footer {
+                padding: 8px 0;
+            }
+
+            .footer-btn {
+                padding: 10px 15px;
+                font-size: 0.85rem;
+            }
+        }
     </style>
 </head>
 <body>
