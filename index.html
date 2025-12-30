@@ -293,7 +293,7 @@
             updateDisplay();
         }
 
-        // Switch sides (swap colors)
+        // Switch sides (swap positions)
         function switchSides() {
             vibrate();
             state.switched = !state.switched;
@@ -302,15 +302,11 @@
             const attackerSide = document.getElementById('attacker-side');
 
             if (state.switched) {
-                defenderSide.classList.remove('defender-side');
-                defenderSide.classList.add('attacker-side');
-                attackerSide.classList.remove('attacker-side');
-                attackerSide.classList.add('defender-side');
+                defenderSide.style.order = '2';
+                attackerSide.style.order = '1';
             } else {
-                defenderSide.classList.remove('attacker-side');
-                defenderSide.classList.add('defender-side');
-                attackerSide.classList.remove('defender-side');
-                attackerSide.classList.add('attacker-side');
+                defenderSide.style.order = '1';
+                attackerSide.style.order = '2';
             }
         }
 
