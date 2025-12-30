@@ -35,6 +35,7 @@
             flex-direction: column;
             user-select: none;
             overflow: hidden;
+            position: relative;
         }
 
         /* Header with round counter */
@@ -517,74 +518,93 @@
         /* Landscape mode on mobile - short viewport */
         @media (max-height: 500px) and (orientation: landscape) {
             .header {
+                position: absolute;
+                top: 0;
+                left: 50%;
+                transform: translateX(-50%);
                 padding: 0;
                 background: linear-gradient(180deg,
-                    rgba(30,30,30,0.95) 0%,
-                    rgba(10,10,10,0.95) 100%);
-                border-bottom: 1px solid rgba(255,255,255,0.1);
-                box-shadow: 0 2px 15px rgba(0,0,0,0.8);
+                    rgba(20,20,20,0.9) 0%,
+                    rgba(10,10,10,0.85) 100%);
+                border: 1px solid rgba(255,255,255,0.1);
+                border-top: none;
+                border-radius: 0 0 8px 8px;
+                box-shadow: 0 3px 20px rgba(0,0,0,0.8);
+                z-index: 100;
             }
 
             .round-container {
-                transform: scale(0.35);
-                margin: -20px 0;
+                transform: scale(0.4);
+                margin: -12px -10px;
+                background: transparent;
+                box-shadow: none;
+            }
+
+            .scores-container {
+                height: 100vh;
+                height: 100dvh;
             }
 
             .score-value {
-                font-size: 6rem;
+                font-size: 7rem;
             }
 
             .cp-section .score-value {
-                font-size: 4rem;
+                font-size: 4.5rem;
             }
 
             .score-label {
-                font-size: 0.65rem;
-                top: 2px;
+                font-size: 0.7rem;
+                top: 5px;
                 letter-spacing: 2px;
             }
 
             .cp-section .score-label {
-                font-size: 0.55rem;
-                top: 1px;
+                font-size: 0.6rem;
+                top: 3px;
             }
 
             .click-zone-indicator {
-                font-size: 1.5rem;
+                font-size: 1.8rem;
                 opacity: 0.06;
             }
 
             .player-side::before,
             .player-side::after {
-                width: 15px;
-                height: 15px;
+                width: 20px;
+                height: 20px;
                 border-width: 2px;
-                top: 3px;
+                top: 5px;
             }
 
-            .defender-side::before { left: 3px; }
-            .attacker-side::before { right: 3px; }
+            .defender-side::before { left: 5px; }
+            .attacker-side::before { right: 5px; }
 
             .defender-side::after,
             .attacker-side::after {
-                bottom: 3px;
+                bottom: 35px;
             }
 
-            .defender-side::after { left: 3px; }
-            .attacker-side::after { right: 3px; }
+            .defender-side::after { left: 5px; }
+            .attacker-side::after { right: 5px; }
 
             .footer {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
                 padding: 0;
                 background: linear-gradient(0deg,
-                    rgba(30,30,30,0.95) 0%,
-                    rgba(10,10,10,0.95) 100%);
+                    rgba(20,20,20,0.9) 0%,
+                    rgba(10,10,10,0.85) 100%);
                 border-top: 1px solid rgba(255,255,255,0.1);
-                box-shadow: 0 -2px 15px rgba(0,0,0,0.8);
+                box-shadow: 0 -3px 20px rgba(0,0,0,0.8);
+                z-index: 100;
             }
 
             .footer-btn {
                 padding: 6px 8px;
-                font-size: 0.65rem;
+                font-size: 0.6rem;
                 letter-spacing: 1px;
                 background: transparent;
                 box-shadow: none;
