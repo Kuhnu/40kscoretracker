@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>40K Score Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,154 +16,404 @@
         }
 
         :root {
-            --attacker-color: #8B0000;
-            --defender-color: #228B22;
-            --bg-color: #1a1a1a;
-            --text-color: #000;
+            --attacker-color: #4A0808;
+            --attacker-glow: #FF2D2D;
+            --defender-color: #083D18;
+            --defender-glow: #00FF44;
+            --bg-color: #050505;
+            --panel-color: #0A0A0A;
+            --text-light: #FFFFFF;
+            --text-dim: #444444;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Orbitron', sans-serif;
             background-color: var(--bg-color);
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             flex-direction: column;
             user-select: none;
+            overflow: hidden;
         }
 
         /* Header with round counter */
         .header {
-            background-color: #2d2d2d;
-            padding: 15px;
+            background: linear-gradient(180deg, #151515 0%, var(--panel-color) 100%);
+            padding: 8px 15px;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.8);
+            position: relative;
+            z-index: 10;
+        }
+
+        .round-container {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            background: linear-gradient(180deg, #1A1A1A 0%, #0A0A0A 100%);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.1),
+                inset 0 -1px 0 rgba(0,0,0,0.5),
+                0 0 40px rgba(0,0,0,0.8);
+        }
+
+        .round-zone {
+            padding: 12px 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.1s;
+        }
+
+        .round-zone:active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .round-zone-indicator {
+            color: #666;
+            font-size: 2rem;
+            font-weight: 900;
         }
 
         .round-display {
-            color: #fff;
-            font-size: 1.2rem;
-            font-weight: bold;
+            padding: 8px 25px;
+            text-align: center;
+            background: rgba(0,0,0,0.3);
         }
 
-        .header-btn {
-            background: #444;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            min-width: 44px;
-            min-height: 44px;
+        .round-label {
+            color: #555;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 4px;
         }
 
-        .header-btn:active {
-            background: #555;
-        }
-
-        .reset-btn {
-            background: #666;
+        .round-value {
+            color: var(--text-light);
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1;
+            text-shadow: 0 0 30px rgba(255,255,255,0.3);
         }
 
         /* Main score area */
         .scores-container {
             display: flex;
             flex: 1;
+            min-height: 0;
         }
 
         .player-side {
             flex: 1;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         .defender-side {
-            background-color: var(--defender-color);
+            background:
+                radial-gradient(ellipse at 0% 0%, rgba(0, 255, 68, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 0% 100%, rgba(0, 255, 68, 0.1) 0%, transparent 40%),
+                linear-gradient(135deg, var(--defender-color) 0%, #020A04 100%);
+            box-shadow: inset -30px 0 60px rgba(0, 0, 0, 0.5);
         }
 
         .attacker-side {
-            background-color: var(--attacker-color);
+            background:
+                radial-gradient(ellipse at 100% 0%, rgba(255, 45, 45, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 100% 100%, rgba(255, 45, 45, 0.1) 0%, transparent 40%),
+                linear-gradient(225deg, var(--attacker-color) 0%, #0A0202 100%);
+            box-shadow: inset 30px 0 60px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Corner decorations */
+        .player-side::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            width: 60px;
+            height: 60px;
+            border-width: 4px;
+            border-style: solid;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .defender-side::before {
+            left: 15px;
+            border-color: var(--defender-glow);
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .attacker-side::before {
+            right: 15px;
+            border-color: var(--attacker-glow);
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .player-side::after {
+            content: '';
+            position: absolute;
+            bottom: 15px;
+            width: 60px;
+            height: 60px;
+            border-width: 4px;
+            border-style: solid;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .defender-side::after {
+            left: 15px;
+            border-color: var(--defender-glow);
+            border-right: none;
+            border-top: none;
+        }
+
+        .attacker-side::after {
+            right: 15px;
+            border-color: var(--attacker-glow);
+            border-left: none;
+            border-top: none;
         }
 
         .score-section {
-            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+            position: relative;
+            cursor: pointer;
         }
 
-        .score-section:last-child {
-            border-bottom: none;
+        .score-section.vp-section {
+            flex: 2;
+        }
+
+        .score-section.cp-section {
+            flex: 1;
         }
 
         .score-label {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--text-color);
-            margin-bottom: 10px;
+            font-size: 1.4rem;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 6px;
+            position: absolute;
+            top: 20px;
         }
 
-        .score-controls {
+        .defender-side .score-label {
+            color: rgba(0, 255, 68, 0.5);
+            text-shadow: 0 0 20px rgba(0, 255, 68, 0.3);
+        }
+
+        .attacker-side .score-label {
+            color: rgba(255, 45, 45, 0.5);
+            text-shadow: 0 0 20px rgba(255, 45, 45, 0.3);
+        }
+
+        .cp-section .score-label {
+            font-size: 1.1rem;
+            letter-spacing: 5px;
+            top: 15px;
+        }
+
+        .score-clickable {
             display: flex;
             align-items: center;
-            gap: 15px;
-        }
-
-        .score-btn {
-            background: rgba(0, 0, 0, 0.3);
-            color: var(--text-color);
-            border: none;
-            width: 60px;
-            height: 60px;
-            font-size: 2.5rem;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            display: flex;
             justify-content: center;
-            align-items: center;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
-        .score-btn:active {
-            background: rgba(0, 0, 0, 0.5);
+        .click-zone {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.1s;
+        }
+
+        .click-zone:active {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .click-zone-indicator {
+            font-size: 3rem;
+            font-weight: 900;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .defender-side .click-zone-indicator {
+            color: var(--defender-glow);
+        }
+
+        .attacker-side .click-zone-indicator {
+            color: var(--attacker-glow);
+        }
+
+        .click-zone.decrease .click-zone-indicator {
+            margin-right: auto;
+            padding-left: 25px;
+        }
+
+        .click-zone.increase .click-zone-indicator {
+            margin-left: auto;
+            padding-right: 25px;
         }
 
         .score-value {
-            font-size: 4rem;
-            font-weight: bold;
-            color: var(--text-color);
-            min-width: 100px;
+            font-size: 18rem;
+            font-weight: 900;
+            color: var(--text-light);
+            text-align: center;
+            line-height: 0.85;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .defender-side .score-value {
+            text-shadow:
+                0 0 80px rgba(0, 255, 68, 0.6),
+                0 0 150px rgba(0, 255, 68, 0.3),
+                0 5px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .attacker-side .score-value {
+            text-shadow:
+                0 0 80px rgba(255, 45, 45, 0.6),
+                0 0 150px rgba(255, 45, 45, 0.3),
+                0 5px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .cp-section .score-value {
+            font-size: 10rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(0deg, #151515 0%, var(--panel-color) 100%);
+            padding: 12px 0;
+            display: flex;
+            box-shadow: 0 -5px 30px rgba(0,0,0,0.8);
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer-btn {
+            flex: 1;
+            background: linear-gradient(180deg, #222 0%, #111 100%);
+            color: #666;
+            border: none;
+            padding: 14px 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: all 0.1s ease;
             text-align: center;
         }
 
-        /* Footer with switch button */
-        .footer {
-            background-color: #2d2d2d;
-            padding: 15px;
+        .footer-btn:first-child {
+            border-right: 1px solid #333;
+        }
+
+        .footer-btn:active {
+            background: linear-gradient(180deg, #333 0%, #222 100%);
+            color: #999;
+        }
+
+        /* Confirmation Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
             display: flex;
+        }
+
+        .modal {
+            background: linear-gradient(180deg, #1A1A1A 0%, #0A0A0A 100%);
+            padding: 40px 60px;
+            text-align: center;
+            box-shadow:
+                0 0 100px rgba(0,0,0,0.9),
+                inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+
+        .modal h2 {
+            color: #888;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 25px;
             justify-content: center;
         }
 
-        .switch-btn {
-            background: #444;
-            color: #fff;
-            border: none;
-            padding: 15px 30px;
-            font-size: 1.1rem;
-            border-radius: 5px;
+        .modal-btn {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            padding: 18px 50px;
             cursor: pointer;
-            min-height: 44px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border: none;
+            transition: all 0.1s ease;
         }
 
-        .switch-btn:active {
-            background: #555;
+        .modal-btn.confirm {
+            background: linear-gradient(180deg, #5A0000 0%, #2A0000 100%);
+            color: var(--attacker-glow);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.1),
+                0 0 30px rgba(255, 45, 45, 0.3);
+        }
+
+        .modal-btn.confirm:active {
+            background: linear-gradient(180deg, #7A0000 0%, #4A0000 100%);
+            transform: scale(0.95);
+        }
+
+        .modal-btn.cancel {
+            background: linear-gradient(180deg, #222 0%, #111 100%);
+            color: #666;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+
+        .modal-btn.cancel:active {
+            background: linear-gradient(180deg, #333 0%, #222 100%);
+            color: #999;
+            transform: scale(0.95);
         }
 
         /* Responsive - stack on mobile */
@@ -169,73 +422,186 @@
                 flex-direction: column;
             }
 
-            .score-value {
-                font-size: 3rem;
+            .defender-side {
+                box-shadow: inset 0 -30px 60px rgba(0, 0, 0, 0.5);
             }
 
-            .score-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 2rem;
+            .attacker-side {
+                box-shadow: inset 0 30px 60px rgba(0, 0, 0, 0.5);
+            }
+
+            .defender-side::before {
+                top: 12px;
+                left: 12px;
+                width: 45px;
+                height: 45px;
+            }
+
+            .defender-side::after {
+                bottom: auto;
+                top: 12px;
+                left: auto;
+                right: 12px;
+                width: 45px;
+                height: 45px;
+                border-left: none;
+                border-bottom: none;
+                border-right: 4px solid var(--defender-glow);
+                border-top: 4px solid var(--defender-glow);
+            }
+
+            .attacker-side::before {
+                top: auto;
+                bottom: 12px;
+                right: auto;
+                left: 12px;
+                width: 45px;
+                height: 45px;
+                border-right: none;
+                border-top: none;
+                border-left: 4px solid var(--attacker-glow);
+                border-bottom: 4px solid var(--attacker-glow);
+            }
+
+            .attacker-side::after {
+                bottom: 12px;
+                right: 12px;
+                width: 45px;
+                height: 45px;
+            }
+
+            .score-value {
+                font-size: 14rem;
+            }
+
+            .cp-section .score-value {
+                font-size: 8rem;
+            }
+
+            .click-zone-indicator {
+                font-size: 2.5rem;
+            }
+
+            .score-label {
+                font-size: 1.2rem;
+            }
+
+            .cp-section .score-label {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .score-value {
+                font-size: 11rem;
+            }
+
+            .cp-section .score-value {
+                font-size: 6rem;
             }
 
             .score-label {
                 font-size: 1rem;
+                letter-spacing: 4px;
+            }
+
+            .cp-section .score-label {
+                font-size: 0.85rem;
+            }
+
+            .round-value {
+                font-size: 2.8rem;
             }
         }
     </style>
 </head>
 <body>
     <header class="header">
-        <span class="round-display">Round: <span id="round">1</span></span>
-        <button class="header-btn" onclick="changeRound(-1)">-</button>
-        <button class="header-btn" onclick="changeRound(1)">+</button>
-        <button class="header-btn reset-btn" onclick="resetGame()">Reset</button>
+        <div class="round-container">
+            <div class="round-zone" onclick="changeRound(-1)">
+                <span class="round-zone-indicator">&lt;</span>
+            </div>
+            <div class="round-display">
+                <div class="round-label">Round</div>
+                <div class="round-value" id="round">1</div>
+            </div>
+            <div class="round-zone" onclick="changeRound(1)">
+                <span class="round-zone-indicator">&gt;</span>
+            </div>
+        </div>
     </header>
 
     <main class="scores-container">
         <section class="player-side defender-side" id="defender-side">
-            <div class="score-section">
+            <div class="score-section vp-section">
                 <span class="score-label">Defender VP</span>
-                <div class="score-controls">
-                    <button class="score-btn" onclick="changeScore('defender', 'vp', -1)">-</button>
-                    <span class="score-value" id="defender-vp">0</span>
-                    <button class="score-btn" onclick="changeScore('defender', 'vp', 1)">+</button>
+                <span class="score-value" id="defender-vp">0</span>
+                <div class="score-clickable">
+                    <div class="click-zone decrease" onclick="changeScore('defender', 'vp', -1)">
+                        <span class="click-zone-indicator">&lt;</span>
+                    </div>
+                    <div class="click-zone increase" onclick="changeScore('defender', 'vp', 1)">
+                        <span class="click-zone-indicator">&gt;</span>
+                    </div>
                 </div>
             </div>
-            <div class="score-section">
+            <div class="score-section cp-section">
                 <span class="score-label">Defender CP</span>
-                <div class="score-controls">
-                    <button class="score-btn" onclick="changeScore('defender', 'cp', -1)">-</button>
-                    <span class="score-value" id="defender-cp">0</span>
-                    <button class="score-btn" onclick="changeScore('defender', 'cp', 1)">+</button>
+                <span class="score-value" id="defender-cp">0</span>
+                <div class="score-clickable">
+                    <div class="click-zone decrease" onclick="changeScore('defender', 'cp', -1)">
+                        <span class="click-zone-indicator">&lt;</span>
+                    </div>
+                    <div class="click-zone increase" onclick="changeScore('defender', 'cp', 1)">
+                        <span class="click-zone-indicator">&gt;</span>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section class="player-side attacker-side" id="attacker-side">
-            <div class="score-section">
+            <div class="score-section vp-section">
                 <span class="score-label">Attacker VP</span>
-                <div class="score-controls">
-                    <button class="score-btn" onclick="changeScore('attacker', 'vp', -1)">-</button>
-                    <span class="score-value" id="attacker-vp">0</span>
-                    <button class="score-btn" onclick="changeScore('attacker', 'vp', 1)">+</button>
+                <span class="score-value" id="attacker-vp">0</span>
+                <div class="score-clickable">
+                    <div class="click-zone decrease" onclick="changeScore('attacker', 'vp', -1)">
+                        <span class="click-zone-indicator">&lt;</span>
+                    </div>
+                    <div class="click-zone increase" onclick="changeScore('attacker', 'vp', 1)">
+                        <span class="click-zone-indicator">&gt;</span>
+                    </div>
                 </div>
             </div>
-            <div class="score-section">
+            <div class="score-section cp-section">
                 <span class="score-label">Attacker CP</span>
-                <div class="score-controls">
-                    <button class="score-btn" onclick="changeScore('attacker', 'cp', -1)">-</button>
-                    <span class="score-value" id="attacker-cp">0</span>
-                    <button class="score-btn" onclick="changeScore('attacker', 'cp', 1)">+</button>
+                <span class="score-value" id="attacker-cp">0</span>
+                <div class="score-clickable">
+                    <div class="click-zone decrease" onclick="changeScore('attacker', 'cp', -1)">
+                        <span class="click-zone-indicator">&lt;</span>
+                    </div>
+                    <div class="click-zone increase" onclick="changeScore('attacker', 'cp', 1)">
+                        <span class="click-zone-indicator">&gt;</span>
+                    </div>
                 </div>
             </div>
         </section>
     </main>
 
     <footer class="footer">
-        <button class="switch-btn" onclick="switchSides()">Switch Sides</button>
+        <button class="footer-btn" onclick="switchSides()">Switch Sides</button>
+        <button class="footer-btn" onclick="showResetConfirm()">Reset</button>
     </footer>
+
+    <!-- Reset Confirmation Modal -->
+    <div class="modal-overlay" id="resetModal">
+        <div class="modal">
+            <h2>Reset Game?</h2>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="hideResetConfirm()">Cancel</button>
+                <button class="modal-btn confirm" onclick="confirmReset()">Reset</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // Game state
@@ -265,11 +631,8 @@
         // Change score
         function changeScore(player, type, delta) {
             vibrate();
-            const newValue = state[player][type] + delta;
-            if (newValue >= 0) {
-                state[player][type] = newValue;
-                updateDisplay();
-            }
+            state[player][type] += delta;
+            updateDisplay();
         }
 
         // Change round
@@ -282,8 +645,20 @@
             }
         }
 
-        // Reset game
-        function resetGame() {
+        // Show reset confirmation
+        function showResetConfirm() {
+            vibrate();
+            document.getElementById('resetModal').classList.add('active');
+        }
+
+        // Hide reset confirmation
+        function hideResetConfirm() {
+            vibrate();
+            document.getElementById('resetModal').classList.remove('active');
+        }
+
+        // Confirm reset
+        function confirmReset() {
             vibrate();
             state.attacker.vp = 0;
             state.attacker.cp = 0;
@@ -291,6 +666,7 @@
             state.defender.cp = 0;
             state.round = 1;
             updateDisplay();
+            hideResetConfirm();
         }
 
         // Switch sides (swap positions)
