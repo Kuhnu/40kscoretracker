@@ -438,7 +438,7 @@
             transform: scale(0.95);
         }
 
-        /* Responsive - stack on mobile */
+        /* Responsive - stack on mobile portrait */
         @media (max-width: 600px) {
             .header {
                 padding: 5px 10px;
@@ -464,72 +464,75 @@
                 flex-direction: column;
             }
 
+            /* Defender first (top) in portrait */
             .defender-side {
+                order: 1;
                 box-shadow: inset 0 -30px 60px rgba(0, 0, 0, 0.5);
             }
 
             .attacker-side {
+                order: 2;
                 box-shadow: inset 0 30px 60px rgba(0, 0, 0, 0.5);
             }
 
+            .player-side::before,
+            .player-side::after {
+                width: 25px;
+                height: 25px;
+                border-width: 3px;
+            }
+
             .defender-side::before {
-                top: 12px;
-                left: 12px;
-                width: 45px;
-                height: 45px;
+                top: 8px;
+                left: 8px;
             }
 
             .defender-side::after {
                 bottom: auto;
-                top: 12px;
+                top: 8px;
                 left: auto;
-                right: 12px;
-                width: 45px;
-                height: 45px;
+                right: 8px;
                 border-left: none;
                 border-bottom: none;
-                border-right: 4px solid var(--defender-glow);
-                border-top: 4px solid var(--defender-glow);
+                border-right: 3px solid var(--defender-glow);
+                border-top: 3px solid var(--defender-glow);
             }
 
             .attacker-side::before {
                 top: auto;
-                bottom: 12px;
+                bottom: 8px;
                 right: auto;
-                left: 12px;
-                width: 45px;
-                height: 45px;
+                left: 8px;
                 border-right: none;
                 border-top: none;
-                border-left: 4px solid var(--attacker-glow);
-                border-bottom: 4px solid var(--attacker-glow);
+                border-left: 3px solid var(--attacker-glow);
+                border-bottom: 3px solid var(--attacker-glow);
             }
 
             .attacker-side::after {
-                bottom: 12px;
-                right: 12px;
-                width: 45px;
-                height: 45px;
+                bottom: 8px;
+                right: 8px;
             }
 
             .score-value {
-                font-size: 14rem;
+                font-size: 6rem;
             }
 
             .cp-section .score-value {
-                font-size: 8rem;
+                font-size: 4rem;
             }
 
             .click-zone-indicator {
-                font-size: 2.5rem;
+                font-size: 1.5rem;
             }
 
             .score-label {
-                font-size: 1.2rem;
+                font-size: 0.8rem;
+                letter-spacing: 3px;
             }
 
             .cp-section .score-label {
-                font-size: 1rem;
+                font-size: 0.7rem;
             }
         }
 
@@ -539,7 +542,7 @@
             }
 
             .round-value {
-                font-size: 2.2rem;
+                font-size: 2rem;
             }
 
             .round-zone-indicator {
@@ -547,20 +550,22 @@
             }
 
             .score-value {
-                font-size: 11rem;
+                font-size: 5rem;
             }
 
             .cp-section .score-value {
-                font-size: 6rem;
+                font-size: 3.5rem;
             }
 
             .score-label {
-                font-size: 1rem;
-                letter-spacing: 4px;
+                font-size: 0.7rem;
+                letter-spacing: 3px;
+                top: 10px;
             }
 
             .cp-section .score-label {
-                font-size: 0.85rem;
+                font-size: 0.6rem;
+                top: 8px;
             }
         }
 
