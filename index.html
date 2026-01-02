@@ -317,14 +317,14 @@
 
         .click-zone.decrease .click-zone-indicator {
             position: absolute;
-            right: 40%;
+            right: 30%;
             top: 50%;
             transform: translateY(-50%);
         }
 
         .click-zone.increase .click-zone-indicator {
             position: absolute;
-            left: 40%;
+            left: 30%;
             top: 50%;
             transform: translateY(-50%);
         }
@@ -944,12 +944,24 @@
                 opacity: 0.06;
             }
 
-            .vp-section .click-zone-indicator {
+            .vp-section .click-zone.decrease .click-zone-indicator {
                 top: 45%;
+                right: 35%;
             }
 
-            .cp-section .click-zone-indicator {
+            .vp-section .click-zone.increase .click-zone-indicator {
+                top: 45%;
+                left: 35%;
+            }
+
+            .cp-section .click-zone.decrease .click-zone-indicator {
                 top: 40%;
+                right: 35%;
+            }
+
+            .cp-section .click-zone.increase .click-zone-indicator {
+                top: 40%;
+                left: 35%;
             }
 
             .player-side::before,
