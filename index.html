@@ -1336,15 +1336,9 @@
                 <table class="history-table">
                     <thead>
                         <tr>
-                            <th rowspan="2">R</th>
-                            <th colspan="2">Scored</th>
-                            <th colspan="2">Total</th>
-                        </tr>
-                        <tr>
-                            <th class="defender-col">DEF</th>
-                            <th class="attacker-col">ATK</th>
-                            <th class="defender-col">DEF</th>
-                            <th class="attacker-col">ATK</th>
+                            <th>R</th>
+                            <th class="defender-col">Defender</th>
+                            <th class="attacker-col">Attacker</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1357,10 +1351,8 @@
                 html += `
                     <tr>
                         <td class="round-col">${entry.round}</td>
-                        <td class="${defDeltaClass}">${formatDelta(entry.defender.vpDelta)}</td>
-                        <td class="${atkDeltaClass}">${formatDelta(entry.attacker.vpDelta)}</td>
-                        <td class="defender-col">${entry.defender.vp}</td>
-                        <td class="attacker-col">${entry.attacker.vp}</td>
+                        <td><span class="${defDeltaClass}">${formatDelta(entry.defender.vpDelta)}</span> <small>(${entry.defender.vp})</small></td>
+                        <td><span class="${atkDeltaClass}">${formatDelta(entry.attacker.vpDelta)}</span> <small>(${entry.attacker.vp})</small></td>
                     </tr>
                 `;
             });
