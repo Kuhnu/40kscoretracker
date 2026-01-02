@@ -51,6 +51,7 @@
         .header {
             background: linear-gradient(180deg, #151515 0%, var(--panel-color) 100%);
             padding: 8px 15px;
+            padding-top: calc(8px + env(safe-area-inset-top, 0px));
             display: flex;
             justify-content: center;
             align-items: center;
@@ -338,6 +339,7 @@
         .footer {
             background: linear-gradient(0deg, #151515 0%, var(--panel-color) 100%);
             padding: 12px 0;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
             display: flex;
             box-shadow: 0 -5px 30px rgba(0,0,0,0.8);
             position: relative;
@@ -371,7 +373,7 @@
         /* Fullscreen button - corner positioned */
         .fullscreen-btn {
             position: fixed;
-            bottom: 60px;
+            bottom: calc(60px + env(safe-area-inset-bottom, 0px));
             right: 10px;
             width: 50px;
             height: 50px;
