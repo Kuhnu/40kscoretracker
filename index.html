@@ -315,15 +315,6 @@
             color: var(--attacker-glow);
         }
 
-        .click-zone.decrease {
-            justify-content: flex-end;
-            padding-right: 15px;
-        }
-
-        .click-zone.increase {
-            justify-content: flex-start;
-            padding-left: 15px;
-        }
 
         .score-value {
             font-size: 22rem;
@@ -941,13 +932,19 @@
                 top: 5px;
             }
 
-            .click-zone {
-                align-items: center;
-            }
-
             .click-zone-indicator {
                 font-size: 2rem;
                 opacity: 0.3 !important;
+            }
+
+            .click-zone.decrease {
+                justify-content: flex-end;
+                padding-right: 10px;
+            }
+
+            .click-zone.increase {
+                justify-content: flex-start;
+                padding-left: 10px;
             }
 
             .player-side::before,
