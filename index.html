@@ -406,23 +406,30 @@
         /* Tap indicators */
         .tap-indicator {
             position: absolute;
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 900;
             pointer-events: none;
             opacity: 0;
-            transform: translateY(0);
+            left: 50%;
+            bottom: 20px;
+            transform: translateX(-50%);
             transition: all 0.4s ease-out;
             z-index: 50;
         }
 
         .tap-indicator.show {
             opacity: 1;
-            transform: translate(-50%, -50%);
+            transform: translateX(-50%) translateY(0);
         }
 
         .tap-indicator.fade {
             opacity: 0;
-            transform: translate(-50%, -70%);
+            transform: translateX(-50%) translateY(-20px);
+        }
+
+        .cp-section .tap-indicator {
+            font-size: 2rem;
+            bottom: 15px;
         }
 
         .defender-side .tap-indicator {
@@ -669,20 +676,36 @@
                 background: transparent;
             }
 
+            /* Push scores to top, leave room for tap indicators at bottom */
+            .vp-section {
+                justify-content: flex-start;
+                padding-top: 25px;
+            }
+
+            .cp-section {
+                justify-content: flex-start;
+                padding-top: 20px;
+            }
+
             /* Add space at bottom for footer */
             .attacker-side .cp-section {
                 padding-bottom: 50px;
             }
 
-            /* Position tap indicators below numbers */
+            /* Tap indicators at bottom of sections */
             .tap-indicator {
-                top: 70% !important;
+                top: auto !important;
+                bottom: 10px !important;
                 font-size: 1.5rem;
             }
 
             .cp-section .tap-indicator {
-                top: 75% !important;
+                bottom: 8px !important;
                 font-size: 1.2rem;
+            }
+
+            .attacker-side .cp-section .tap-indicator {
+                bottom: 55px !important;
             }
         }
 
@@ -782,10 +805,16 @@
                 top: 3px;
             }
 
+            /* Push scores to top, leave room for tap indicators at bottom */
+            .vp-section {
+                justify-content: flex-start;
+                padding-top: 20px;
+            }
+
             .cp-section {
                 padding-bottom: 30px;
                 justify-content: flex-start;
-                padding-top: 25px;
+                padding-top: 20px;
             }
 
             .click-zone-indicator {
@@ -839,14 +868,15 @@
                 border-right: none;
             }
 
-            /* Tap indicators below numbers in landscape */
+            /* Tap indicators at bottom of sections in landscape */
             .tap-indicator {
-                top: 65% !important;
+                top: auto !important;
+                bottom: 10px !important;
                 font-size: 1.3rem;
             }
 
             .cp-section .tap-indicator {
-                top: 70% !important;
+                bottom: 35px !important;
                 font-size: 1rem;
             }
         }
@@ -1058,9 +1088,6 @@
                 const indicator = document.createElement('div');
                 indicator.className = `tap-indicator ${delta > 0 ? 'plus' : 'minus'}`;
                 indicator.textContent = delta > 0 ? `+1` : `-1`;
-                indicator.style.left = '50%';
-                indicator.style.top = '50%';
-                indicator.style.transform = 'translate(-50%, -50%)';
                 section.appendChild(indicator);
 
                 tapTrackers[key] = {
