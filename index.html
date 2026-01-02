@@ -688,20 +688,23 @@
                 background: transparent;
             }
 
-            /* Push scores to top, leave room for tap indicators at bottom */
-            .vp-section {
-                justify-content: flex-start;
+            /* Add space at top for floating header */
+            .defender-side .vp-section {
+                padding-top: 60px;
+            }
+
+            /* Standard spacing for other sections */
+            .attacker-side .vp-section {
                 padding-top: 25px;
             }
 
             .cp-section {
-                justify-content: flex-start;
                 padding-top: 20px;
             }
 
             /* Add space at bottom for footer */
             .attacker-side .cp-section {
-                padding-bottom: 50px;
+                padding-bottom: 60px;
             }
 
             /* Tap indicators at bottom of sections */
