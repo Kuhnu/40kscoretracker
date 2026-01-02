@@ -1064,9 +1064,9 @@
     </div>
 
     <!-- History Modal -->
-    <div class="modal-overlay" id="historyModal">
-        <div class="modal history-modal">
-            <h2>Score History</h2>
+    <div class="modal-overlay" id="historyModal" onclick="hideHistory()">
+        <div class="modal history-modal" onclick="event.stopPropagation()">
+            <h2>Round History</h2>
             <div class="history-table-container" id="historyContent">
                 <!-- Populated by JavaScript -->
             </div>
@@ -1326,44 +1326,41 @@
                 return;
             }
 
+            const formatDelta = (delta) => {
+                if (delta > 0) return `+${delta}`;
+                if (delta < 0) return `${delta}`;
+                return '0';
+            };
+
             let html = `
                 <table class="history-table">
                     <thead>
                         <tr>
-                            <th>Round</th>
-                            <th colspan="2">Defender</th>
-                            <th colspan="2">Attacker</th>
+                            <th rowspan="2">R</th>
+                            <th colspan="2">Scored</th>
+                            <th colspan="2">Total</th>
                         </tr>
                         <tr>
-                            <th></th>
-                            <th>VP</th>
-                            <th>CP</th>
-                            <th>VP</th>
-                            <th>CP</th>
+                            <th class="defender-col">DEF</th>
+                            <th class="attacker-col">ATK</th>
+                            <th class="defender-col">DEF</th>
+                            <th class="attacker-col">ATK</th>
                         </tr>
                     </thead>
                     <tbody>
             `;
 
             state.history.sort((a, b) => a.round - b.round).forEach(entry => {
-                const defVPClass = entry.defender.vpDelta > 0 ? 'delta-positive' : (entry.defender.vpDelta < 0 ? 'delta-negative' : '');
-                const defCPClass = entry.defender.cpDelta > 0 ? 'delta-positive' : (entry.defender.cpDelta < 0 ? 'delta-negative' : '');
-                const atkVPClass = entry.attacker.vpDelta > 0 ? 'delta-positive' : (entry.attacker.vpDelta < 0 ? 'delta-negative' : '');
-                const atkCPClass = entry.attacker.cpDelta > 0 ? 'delta-positive' : (entry.attacker.cpDelta < 0 ? 'delta-negative' : '');
-
-                const formatDelta = (delta) => {
-                    if (delta > 0) return `+${delta}`;
-                    if (delta < 0) return `${delta}`;
-                    return '0';
-                };
+                const defDeltaClass = entry.defender.vpDelta > 0 ? 'delta-positive' : (entry.defender.vpDelta < 0 ? 'delta-negative' : '');
+                const atkDeltaClass = entry.attacker.vpDelta > 0 ? 'delta-positive' : (entry.attacker.vpDelta < 0 ? 'delta-negative' : '');
 
                 html += `
                     <tr>
                         <td class="round-col">${entry.round}</td>
-                        <td class="defender-col">${entry.defender.vp} <small class="${defVPClass}">(${formatDelta(entry.defender.vpDelta)})</small></td>
-                        <td class="defender-col">${entry.defender.cp} <small class="${defCPClass}">(${formatDelta(entry.defender.cpDelta)})</small></td>
-                        <td class="attacker-col">${entry.attacker.vp} <small class="${atkVPClass}">(${formatDelta(entry.attacker.vpDelta)})</small></td>
-                        <td class="attacker-col">${entry.attacker.cp} <small class="${atkCPClass}">(${formatDelta(entry.attacker.cpDelta)})</small></td>
+                        <td class="${defDeltaClass}">${formatDelta(entry.defender.vpDelta)}</td>
+                        <td class="${atkDeltaClass}">${formatDelta(entry.attacker.vpDelta)}</td>
+                        <td class="defender-col">${entry.defender.vp}</td>
+                        <td class="attacker-col">${entry.attacker.vp}</td>
                     </tr>
                 `;
             });
