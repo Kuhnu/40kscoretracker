@@ -317,12 +317,16 @@
 
         .click-zone.decrease .click-zone-indicator {
             position: absolute;
-            right: 30%;
+            right: 25%;
+            top: 50%;
+            transform: translateY(-50%);
         }
 
         .click-zone.increase .click-zone-indicator {
             position: absolute;
-            left: 30%;
+            left: 25%;
+            top: 50%;
+            transform: translateY(-50%);
         }
 
         .score-value {
@@ -930,9 +934,9 @@
             }
 
             .cp-section {
-                padding-bottom: 30px;
+                padding-bottom: 60px;
                 justify-content: flex-start;
-                padding-top: 20px;
+                padding-top: 10px;
             }
 
             .click-zone-indicator {
@@ -1570,6 +1574,24 @@
         // Initialize
         loadState();
         updateDisplay();
+
+        // Register service worker for automatic updates
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then((registration) => {
+                // Check for updates every time the app loads
+                registration.update();
+
+                // Auto-refresh when new version is available
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'activated') {
+                            window.location.reload();
+                        }
+                    });
+                });
+            });
+        }
     </script>
 </body>
 </html>
