@@ -359,15 +359,32 @@
             border-right: none;
         }
 
-        /* Fullscreen button */
+        /* Fullscreen button - corner positioned */
         .fullscreen-btn {
-            display: none;
+            position: fixed;
+            bottom: 60px;
+            right: 10px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(30, 30, 30, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.5rem;
+            letter-spacing: 1px;
+            z-index: 200;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            flex: none;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        @media (max-width: 600px), (max-height: 500px) {
-            .fullscreen-btn {
-                display: block;
-            }
+        .fullscreen-btn:active {
+            background: rgba(60, 60, 60, 0.8);
+            color: rgba(255, 255, 255, 0.8);
         }
 
         /* Tap indicators */
@@ -811,10 +828,12 @@
     </main>
 
     <footer class="footer">
-        <button class="footer-btn" onclick="switchSides()">Switch</button>
-        <button class="footer-btn fullscreen-btn" onclick="toggleFullscreen()">Fullscreen</button>
+        <button class="footer-btn" onclick="switchSides()">Switch Sides</button>
         <button class="footer-btn" onclick="showResetConfirm()">Reset</button>
     </footer>
+
+    <!-- Fullscreen button -->
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">FS</button>
 
     <!-- Reset Confirmation Modal -->
     <div class="modal-overlay" id="resetModal">
@@ -882,25 +901,62 @@
             saveState();
         }
 
-        // Show tap indicator
-        function showTapIndicator(player, type, delta) {
-            const section = document.querySelector(`#${player}-side .${type}-section`);
-            const indicator = document.createElement('div');
-            indicator.className = 'tap-indicator';
-            indicator.textContent = delta > 0 ? `+${delta}` : delta;
-            indicator.style.left = '50%';
-            indicator.style.top = '50%';
-            indicator.style.transform = 'translate(-50%, -50%)';
-            section.appendChild(indicator);
+        // Track consecutive presses
+        const tapTrackers = {};
 
-            // Trigger animation
-            requestAnimationFrame(() => {
-                indicator.classList.add('show');
-                setTimeout(() => {
+        // Show tap indicator with consecutive counting
+        function showTapIndicator(player, type, delta) {
+            const key = `${player}-${type}-${delta > 0 ? 'plus' : 'minus'}`;
+            const section = document.querySelector(`#${player}-side .${type}-section`);
+
+            // Check if there's an active indicator for this key
+            if (tapTrackers[key] && tapTrackers[key].active) {
+                // Update existing indicator
+                tapTrackers[key].count += Math.abs(delta);
+                const indicator = tapTrackers[key].element;
+                indicator.textContent = delta > 0 ? `+${tapTrackers[key].count}` : `-${tapTrackers[key].count}`;
+
+                // Reset the fade timer
+                clearTimeout(tapTrackers[key].fadeTimer);
+                clearTimeout(tapTrackers[key].removeTimer);
+
+                tapTrackers[key].fadeTimer = setTimeout(() => {
                     indicator.classList.add('fade');
-                    setTimeout(() => indicator.remove(), 400);
-                }, 100);
-            });
+                    tapTrackers[key].removeTimer = setTimeout(() => {
+                        indicator.remove();
+                        tapTrackers[key].active = false;
+                    }, 400);
+                }, 600);
+            } else {
+                // Create new indicator
+                const indicator = document.createElement('div');
+                indicator.className = 'tap-indicator';
+                indicator.textContent = delta > 0 ? `+1` : `-1`;
+                indicator.style.left = '50%';
+                indicator.style.top = '50%';
+                indicator.style.transform = 'translate(-50%, -50%)';
+                section.appendChild(indicator);
+
+                tapTrackers[key] = {
+                    active: true,
+                    count: 1,
+                    element: indicator,
+                    fadeTimer: null,
+                    removeTimer: null
+                };
+
+                // Trigger animation
+                requestAnimationFrame(() => {
+                    indicator.classList.add('show');
+                    tapTrackers[key].fadeTimer = setTimeout(() => {
+                        indicator.classList.add('fade');
+                        tapTrackers[key].removeTimer = setTimeout(() => {
+                            indicator.remove();
+                            tapTrackers[key].active = false;
+                        }, 400);
+                    }, 600);
+                });
+            }
         }
 
         // Change score
@@ -956,22 +1012,52 @@
         // Toggle fullscreen
         function toggleFullscreen() {
             vibrate();
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    console.log('Fullscreen not available');
-                });
+            const elem = document.documentElement;
+
+            const isFullscreen = document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement ||
+                document.msFullscreenElement;
+
+            if (!isFullscreen) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                } else if (elem.mozRequestFullScreen) {
+                    elem.mozRequestFullScreen();
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                }
             } else {
-                document.exitFullscreen();
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
             }
         }
 
         // Update fullscreen button text
-        document.addEventListener('fullscreenchange', () => {
+        function updateFullscreenBtn() {
             const btn = document.querySelector('.fullscreen-btn');
+            const isFullscreen = document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement ||
+                document.msFullscreenElement;
             if (btn) {
-                btn.textContent = document.fullscreenElement ? 'Exit FS' : 'Fullscreen';
+                btn.textContent = isFullscreen ? 'X' : 'FS';
             }
-        });
+        }
+
+        document.addEventListener('fullscreenchange', updateFullscreenBtn);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenBtn);
+        document.addEventListener('mozfullscreenchange', updateFullscreenBtn);
+        document.addEventListener('MSFullscreenChange', updateFullscreenBtn);
 
         // Initialize
         loadState();
