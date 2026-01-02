@@ -1384,23 +1384,33 @@
                 <table class="history-table">
                     <thead>
                         <tr>
-                            <th>R</th>
-                            <th class="defender-col">Defender</th>
-                            <th class="attacker-col">Attacker</th>
+                            <th rowspan="2">R</th>
+                            <th colspan="2" class="defender-col">Defender</th>
+                            <th colspan="2" class="attacker-col">Attacker</th>
+                        </tr>
+                        <tr>
+                            <th class="defender-col">VP</th>
+                            <th class="defender-col">CP</th>
+                            <th class="attacker-col">VP</th>
+                            <th class="attacker-col">CP</th>
                         </tr>
                     </thead>
                     <tbody>
             `;
 
             state.history.sort((a, b) => a.round - b.round).forEach(entry => {
-                const defDeltaClass = entry.defender.vpDelta > 0 ? 'delta-positive' : (entry.defender.vpDelta < 0 ? 'delta-negative' : '');
-                const atkDeltaClass = entry.attacker.vpDelta > 0 ? 'delta-positive' : (entry.attacker.vpDelta < 0 ? 'delta-negative' : '');
+                const defVpClass = entry.defender.vpDelta > 0 ? 'delta-positive' : (entry.defender.vpDelta < 0 ? 'delta-negative' : '');
+                const defCpClass = entry.defender.cpDelta > 0 ? 'delta-positive' : (entry.defender.cpDelta < 0 ? 'delta-negative' : '');
+                const atkVpClass = entry.attacker.vpDelta > 0 ? 'delta-positive' : (entry.attacker.vpDelta < 0 ? 'delta-negative' : '');
+                const atkCpClass = entry.attacker.cpDelta > 0 ? 'delta-positive' : (entry.attacker.cpDelta < 0 ? 'delta-negative' : '');
 
                 html += `
                     <tr>
                         <td class="round-col">${entry.round}</td>
-                        <td><span class="${defDeltaClass}">${formatDelta(entry.defender.vpDelta)}</span> <small>(${entry.defender.vp})</small></td>
-                        <td><span class="${atkDeltaClass}">${formatDelta(entry.attacker.vpDelta)}</span> <small>(${entry.attacker.vp})</small></td>
+                        <td><span class="${defVpClass}">${formatDelta(entry.defender.vpDelta)}</span> <small>(${entry.defender.vp})</small></td>
+                        <td><span class="${defCpClass}">${formatDelta(entry.defender.cpDelta)}</span> <small>(${entry.defender.cp})</small></td>
+                        <td><span class="${atkVpClass}">${formatDelta(entry.attacker.vpDelta)}</span> <small>(${entry.attacker.vp})</small></td>
+                        <td><span class="${atkCpClass}">${formatDelta(entry.attacker.cpDelta)}</span> <small>(${entry.attacker.cp})</small></td>
                     </tr>
                 `;
             });
@@ -1501,6 +1511,32 @@
         document.addEventListener('webkitfullscreenchange', updateFullscreenBtn);
         document.addEventListener('mozfullscreenchange', updateFullscreenBtn);
         document.addEventListener('MSFullscreenChange', updateFullscreenBtn);
+
+        // Try to lock orientation to landscape
+        function lockLandscape() {
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(() => {
+                    // Orientation lock not supported or not in fullscreen
+                });
+            }
+        }
+
+        // Lock orientation when entering fullscreen
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                lockLandscape();
+            }
+        });
+        document.addEventListener('webkitfullscreenchange', () => {
+            if (document.webkitFullscreenElement) {
+                lockLandscape();
+            }
+        });
+
+        // Try to lock on load for PWA/standalone mode
+        if (isStandalone) {
+            lockLandscape();
+        }
 
         // Initialize
         loadState();
