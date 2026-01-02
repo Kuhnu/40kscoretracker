@@ -351,8 +351,55 @@
             text-align: center;
         }
 
-        .footer-btn:first-child {
+        .footer-btn {
             border-right: 1px solid #333;
+        }
+
+        .footer-btn:last-child {
+            border-right: none;
+        }
+
+        /* Fullscreen button */
+        .fullscreen-btn {
+            display: none;
+        }
+
+        @media (max-width: 600px), (max-height: 500px) {
+            .fullscreen-btn {
+                display: block;
+            }
+        }
+
+        /* Tap indicators */
+        .tap-indicator {
+            position: absolute;
+            font-size: 2rem;
+            font-weight: 900;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(0);
+            transition: all 0.4s ease-out;
+            z-index: 50;
+        }
+
+        .tap-indicator.show {
+            opacity: 1;
+            transform: translateY(-20px);
+        }
+
+        .tap-indicator.fade {
+            opacity: 0;
+            transform: translateY(-40px);
+        }
+
+        .defender-side .tap-indicator {
+            color: var(--defender-glow);
+            text-shadow: 0 0 20px var(--defender-glow);
+        }
+
+        .attacker-side .tap-indicator {
+            color: var(--attacker-glow);
+            text-shadow: 0 0 20px var(--attacker-glow);
         }
 
         .footer-btn:active {
@@ -682,10 +729,11 @@
                 letter-spacing: 1px;
                 background: transparent;
                 box-shadow: none;
+                border-right: 1px solid rgba(255,255,255,0.1);
             }
 
-            .footer-btn:first-child {
-                border-right: 1px solid rgba(255,255,255,0.1);
+            .footer-btn:last-child {
+                border-right: none;
             }
         }
     </style>
@@ -763,7 +811,8 @@
     </main>
 
     <footer class="footer">
-        <button class="footer-btn" onclick="switchSides()">Switch Sides</button>
+        <button class="footer-btn" onclick="switchSides()">Switch</button>
+        <button class="footer-btn fullscreen-btn" onclick="toggleFullscreen()">Fullscreen</button>
         <button class="footer-btn" onclick="showResetConfirm()">Reset</button>
     </footer>
 
@@ -833,10 +882,32 @@
             saveState();
         }
 
+        // Show tap indicator
+        function showTapIndicator(player, type, delta) {
+            const section = document.querySelector(`#${player}-side .${type}-section`);
+            const indicator = document.createElement('div');
+            indicator.className = 'tap-indicator';
+            indicator.textContent = delta > 0 ? `+${delta}` : delta;
+            indicator.style.left = '50%';
+            indicator.style.top = '50%';
+            indicator.style.transform = 'translate(-50%, -50%)';
+            section.appendChild(indicator);
+
+            // Trigger animation
+            requestAnimationFrame(() => {
+                indicator.classList.add('show');
+                setTimeout(() => {
+                    indicator.classList.add('fade');
+                    setTimeout(() => indicator.remove(), 400);
+                }, 100);
+            });
+        }
+
         // Change score
         function changeScore(player, type, delta) {
             vibrate();
             state[player][type] += delta;
+            showTapIndicator(player, type, delta);
             updateDisplay();
         }
 
@@ -881,6 +952,26 @@
             state.switched = !state.switched;
             updateDisplay();
         }
+
+        // Toggle fullscreen
+        function toggleFullscreen() {
+            vibrate();
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log('Fullscreen not available');
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Update fullscreen button text
+        document.addEventListener('fullscreenchange', () => {
+            const btn = document.querySelector('.fullscreen-btn');
+            if (btn) {
+                btn.textContent = document.fullscreenElement ? 'Exit FS' : 'Fullscreen';
+            }
+        });
 
         // Initialize
         loadState();
