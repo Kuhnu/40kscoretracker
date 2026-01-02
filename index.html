@@ -616,45 +616,50 @@
             text-align: center;
         }
 
-        /* Rotate device overlay for portrait mode on mobile */
-        .rotate-overlay {
+        /* Landscape recommendation tooltip */
+        .landscape-tooltip {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(5, 5, 5, 0.98);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px 25px;
+            z-index: 500;
             text-align: center;
-            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            max-width: 280px;
         }
 
-        .rotate-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            animation: rotate-hint 2s ease-in-out infinite;
+        .landscape-tooltip.show {
+            display: block;
         }
 
-        @keyframes rotate-hint {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(90deg); }
+        .landscape-tooltip-text {
+            color: #aaa;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
         }
 
-        .rotate-text {
+        .landscape-tooltip-dismiss {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             color: #888;
-            font-size: 1.2rem;
+            padding: 8px 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
+            cursor: pointer;
+            border-radius: 4px;
         }
 
-        @media (max-width: 600px) and (orientation: portrait) {
-            .rotate-overlay {
-                display: flex;
-            }
+        .landscape-tooltip-dismiss:active {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
         }
 
         /* Responsive - stack on mobile portrait */
@@ -1076,10 +1081,12 @@
     <!-- Fullscreen button -->
     <button class="fullscreen-btn" onclick="toggleFullscreen()">FS</button>
 
-    <!-- Rotate device overlay -->
-    <div class="rotate-overlay">
-        <div class="rotate-icon">📱</div>
-        <div class="rotate-text">Rotate device to landscape</div>
+    <!-- Landscape recommendation tooltip -->
+    <div class="landscape-tooltip" id="landscapeTooltip">
+        <div class="landscape-tooltip-text">
+            For the best experience, rotate your device to landscape mode.
+        </div>
+        <button class="landscape-tooltip-dismiss" onclick="dismissLandscapeTooltip()">OK</button>
     </div>
 
     <!-- Reset Confirmation Modal -->
@@ -1537,6 +1544,26 @@
         if (isStandalone) {
             lockLandscape();
         }
+
+        // Landscape tooltip for portrait mode
+        function dismissLandscapeTooltip() {
+            vibrate();
+            document.getElementById('landscapeTooltip').classList.remove('show');
+            sessionStorage.setItem('landscapeTooltipDismissed', 'true');
+        }
+
+        function checkShowLandscapeTooltip() {
+            const dismissed = sessionStorage.getItem('landscapeTooltipDismissed');
+            const isPortrait = window.innerHeight > window.innerWidth;
+            const isMobile = window.innerWidth <= 600;
+
+            if (!dismissed && isPortrait && isMobile) {
+                document.getElementById('landscapeTooltip').classList.add('show');
+            }
+        }
+
+        // Check on load
+        checkShowLandscapeTooltip();
 
         // Initialize
         loadState();
