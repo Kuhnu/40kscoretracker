@@ -293,6 +293,7 @@
             align-items: center;
             justify-content: center;
             transition: background 0.1s;
+            position: relative;
         }
 
         .click-zone:active {
@@ -315,15 +316,13 @@
         }
 
         .click-zone.decrease .click-zone-indicator {
-            margin-right: 0;
-            margin-left: auto;
-            padding-right: 15px;
+            position: absolute;
+            right: 30%;
         }
 
         .click-zone.increase .click-zone-indicator {
-            margin-left: 0;
-            margin-right: auto;
-            padding-left: 15px;
+            position: absolute;
+            left: 30%;
         }
 
         .score-value {
