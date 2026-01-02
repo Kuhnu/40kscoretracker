@@ -548,6 +548,73 @@
             transform: scale(0.95);
         }
 
+        /* History Modal */
+        .history-modal {
+            max-width: 90vw;
+            max-height: 80vh;
+            overflow: hidden;
+        }
+
+        .history-table-container {
+            max-height: 50vh;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        .history-table th,
+        .history-table td {
+            padding: 8px 12px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .history-table th {
+            color: #888;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.7rem;
+            position: sticky;
+            top: 0;
+            background: #1A1A1A;
+        }
+
+        .history-table td {
+            color: #ccc;
+        }
+
+        .history-table .round-col {
+            color: #888;
+        }
+
+        .history-table .defender-col {
+            color: var(--defender-glow);
+        }
+
+        .history-table .attacker-col {
+            color: var(--attacker-glow);
+        }
+
+        .history-table .delta-positive {
+            color: #00FF44;
+        }
+
+        .history-table .delta-negative {
+            color: #FF4444;
+        }
+
+        .history-empty {
+            color: #666;
+            padding: 30px;
+            text-align: center;
+        }
+
         /* Responsive - stack on mobile portrait */
         @media (max-width: 600px) {
             .header {
@@ -959,7 +1026,8 @@
     </main>
 
     <footer class="footer">
-        <button class="footer-btn" onclick="switchSides()">Switch Sides</button>
+        <button class="footer-btn" onclick="switchSides()">Switch</button>
+        <button class="footer-btn" onclick="showHistory()">History</button>
         <button class="footer-btn" onclick="showResetConfirm()">Reset</button>
     </footer>
 
@@ -995,13 +1063,26 @@
         </div>
     </div>
 
+    <!-- History Modal -->
+    <div class="modal-overlay" id="historyModal">
+        <div class="modal history-modal">
+            <h2>Score History</h2>
+            <div class="history-table-container" id="historyContent">
+                <!-- Populated by JavaScript -->
+            </div>
+            <button class="modal-btn cancel" onclick="hideHistory()">Close</button>
+        </div>
+    </div>
+
     <script>
         // Game state
         let state = {
             attacker: { vp: 0, cp: 0 },
             defender: { vp: 0, cp: 0 },
             round: 1,
-            switched: false
+            switched: false,
+            history: [],
+            lastRecordedRound: 0
         };
 
         // Load state from localStorage
@@ -1124,11 +1205,63 @@
             updateDisplay();
         }
 
+        // Record current scores for the round
+        function recordRoundHistory() {
+            const currentRound = state.round;
+
+            // Find or create entry for this round
+            let roundEntry = state.history.find(h => h.round === currentRound);
+
+            if (!roundEntry) {
+                // Get previous totals
+                const prevEntry = state.history.find(h => h.round === currentRound - 1);
+                const prevDefVP = prevEntry ? prevEntry.defender.vp : 0;
+                const prevDefCP = prevEntry ? prevEntry.defender.cp : 0;
+                const prevAtkVP = prevEntry ? prevEntry.attacker.vp : 0;
+                const prevAtkCP = prevEntry ? prevEntry.attacker.cp : 0;
+
+                roundEntry = {
+                    round: currentRound,
+                    defender: {
+                        vp: state.defender.vp,
+                        cp: state.defender.cp,
+                        vpDelta: state.defender.vp - prevDefVP,
+                        cpDelta: state.defender.cp - prevDefCP
+                    },
+                    attacker: {
+                        vp: state.attacker.vp,
+                        cp: state.attacker.cp,
+                        vpDelta: state.attacker.vp - prevAtkVP,
+                        cpDelta: state.attacker.cp - prevAtkCP
+                    }
+                };
+                state.history.push(roundEntry);
+            } else {
+                // Update existing entry
+                const prevEntry = state.history.find(h => h.round === currentRound - 1);
+                const prevDefVP = prevEntry ? prevEntry.defender.vp : 0;
+                const prevDefCP = prevEntry ? prevEntry.defender.cp : 0;
+                const prevAtkVP = prevEntry ? prevEntry.attacker.vp : 0;
+                const prevAtkCP = prevEntry ? prevEntry.attacker.cp : 0;
+
+                roundEntry.defender.vp = state.defender.vp;
+                roundEntry.defender.cp = state.defender.cp;
+                roundEntry.defender.vpDelta = state.defender.vp - prevDefVP;
+                roundEntry.defender.cpDelta = state.defender.cp - prevDefCP;
+                roundEntry.attacker.vp = state.attacker.vp;
+                roundEntry.attacker.cp = state.attacker.cp;
+                roundEntry.attacker.vpDelta = state.attacker.vp - prevAtkVP;
+                roundEntry.attacker.cpDelta = state.attacker.cp - prevAtkCP;
+            }
+        }
+
         // Change round
         function changeRound(delta) {
             vibrate();
             const newRound = state.round + delta;
             if (newRound >= 1) {
+                // Record current round before changing
+                recordRoundHistory();
                 state.round = newRound;
                 updateDisplay();
             }
@@ -1155,8 +1288,79 @@
             state.defender.cp = 0;
             state.round = 1;
             state.switched = false;
+            state.history = [];
             updateDisplay();
             hideResetConfirm();
+        }
+
+        // Show history modal
+        function showHistory() {
+            vibrate();
+            // Record current round first
+            recordRoundHistory();
+            renderHistory();
+            document.getElementById('historyModal').classList.add('active');
+        }
+
+        // Hide history modal
+        function hideHistory() {
+            vibrate();
+            document.getElementById('historyModal').classList.remove('active');
+        }
+
+        // Render history table
+        function renderHistory() {
+            const container = document.getElementById('historyContent');
+
+            if (state.history.length === 0) {
+                container.innerHTML = '<div class="history-empty">No history yet.<br>Advance rounds to record scores.</div>';
+                return;
+            }
+
+            let html = `
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Round</th>
+                            <th colspan="2">Defender</th>
+                            <th colspan="2">Attacker</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th>VP</th>
+                            <th>CP</th>
+                            <th>VP</th>
+                            <th>CP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            state.history.sort((a, b) => a.round - b.round).forEach(entry => {
+                const defVPClass = entry.defender.vpDelta > 0 ? 'delta-positive' : (entry.defender.vpDelta < 0 ? 'delta-negative' : '');
+                const defCPClass = entry.defender.cpDelta > 0 ? 'delta-positive' : (entry.defender.cpDelta < 0 ? 'delta-negative' : '');
+                const atkVPClass = entry.attacker.vpDelta > 0 ? 'delta-positive' : (entry.attacker.vpDelta < 0 ? 'delta-negative' : '');
+                const atkCPClass = entry.attacker.cpDelta > 0 ? 'delta-positive' : (entry.attacker.cpDelta < 0 ? 'delta-negative' : '');
+
+                const formatDelta = (delta) => {
+                    if (delta > 0) return `+${delta}`;
+                    if (delta < 0) return `${delta}`;
+                    return '0';
+                };
+
+                html += `
+                    <tr>
+                        <td class="round-col">${entry.round}</td>
+                        <td class="defender-col">${entry.defender.vp} <small class="${defVPClass}">(${formatDelta(entry.defender.vpDelta)})</small></td>
+                        <td class="defender-col">${entry.defender.cp} <small class="${defCPClass}">(${formatDelta(entry.defender.cpDelta)})</small></td>
+                        <td class="attacker-col">${entry.attacker.vp} <small class="${atkVPClass}">(${formatDelta(entry.attacker.vpDelta)})</small></td>
+                        <td class="attacker-col">${entry.attacker.cp} <small class="${atkCPClass}">(${formatDelta(entry.attacker.cpDelta)})</small></td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
         }
 
         // Switch sides (swap positions)
