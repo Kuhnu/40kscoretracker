@@ -303,9 +303,8 @@
         .click-zone-indicator {
             font-size: 3rem;
             font-weight: 900;
-            opacity: 0.1;
+            opacity: 0.2;
             pointer-events: none;
-            z-index: 5;
         }
 
         .defender-side .click-zone-indicator {
@@ -317,17 +316,11 @@
         }
 
         .click-zone.decrease .click-zone-indicator {
-            position: absolute;
-            right: 30%;
-            top: 50%;
-            transform: translateY(-50%);
+            /* Centered in left zone, pulled toward center */
         }
 
         .click-zone.increase .click-zone-indicator {
-            position: absolute;
-            left: 30%;
-            top: 50%;
-            transform: translateY(-50%);
+            /* Centered in right zone, pulled toward center */
         }
 
         .score-value {
@@ -943,28 +936,7 @@
 
             .click-zone-indicator {
                 font-size: 2rem;
-                opacity: 0.25;
-                z-index: 10;
-            }
-
-            .vp-section .click-zone.decrease .click-zone-indicator {
-                top: 50%;
-                right: 35%;
-            }
-
-            .vp-section .click-zone.increase .click-zone-indicator {
-                top: 50%;
-                left: 35%;
-            }
-
-            .cp-section .click-zone.decrease .click-zone-indicator {
-                top: 45%;
-                right: 35%;
-            }
-
-            .cp-section .click-zone.increase .click-zone-indicator {
-                top: 45%;
-                left: 35%;
+                opacity: 0.3 !important;
             }
 
             .player-side::before,
