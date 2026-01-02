@@ -317,14 +317,14 @@
 
         .click-zone.decrease .click-zone-indicator {
             position: absolute;
-            right: 35%;
+            right: 40%;
             top: 50%;
             transform: translateY(-50%);
         }
 
         .click-zone.increase .click-zone-indicator {
             position: absolute;
-            left: 35%;
+            left: 40%;
             top: 50%;
             transform: translateY(-50%);
         }
@@ -934,14 +934,22 @@
             }
 
             .cp-section {
-                padding-bottom: 55px;
-                justify-content: center;
-                padding-top: 0;
+                padding-bottom: 50px;
+                justify-content: flex-start;
+                padding-top: 15px;
             }
 
             .click-zone-indicator {
                 font-size: 1.8rem;
                 opacity: 0.06;
+            }
+
+            .vp-section .click-zone-indicator {
+                top: 45%;
+            }
+
+            .cp-section .click-zone-indicator {
+                top: 40%;
             }
 
             .player-side::before,
