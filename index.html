@@ -432,13 +432,15 @@
             text-shadow: 0 0 20px var(--attacker-glow);
         }
 
-        /* Position +/- indicators on opposite sides */
+        /* Tap indicator centered */
         .tap-indicator.plus {
-            left: 65% !important;
+            color: #00FF44;
+            text-shadow: 0 0 20px rgba(0, 255, 68, 0.8);
         }
 
         .tap-indicator.minus {
-            left: 35% !important;
+            color: #FF4444;
+            text-shadow: 0 0 20px rgba(255, 68, 68, 0.8);
         }
 
         .footer-btn:active {
@@ -646,31 +648,27 @@
                 bottom: 0;
                 left: 0;
                 right: 0;
-                padding: 8px 0;
-                padding-bottom: calc(8px + constant(safe-area-inset-bottom));
-                padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+                padding: 6px 0;
+                padding-bottom: calc(6px + constant(safe-area-inset-bottom));
+                padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
                 background: linear-gradient(0deg,
-                    rgba(20,20,20,0.9) 0%,
-                    rgba(10,10,10,0.85) 100%);
-                border-top: 1px solid rgba(255,255,255,0.1);
+                    rgba(20,20,20,0.95) 0%,
+                    rgba(10,10,10,0.9) 100%);
+                border-top: 1px solid rgba(255,255,255,0.15);
                 box-shadow: 0 -3px 20px rgba(0,0,0,0.8);
                 z-index: 100;
             }
 
             .footer-btn {
-                padding: 10px 8px;
-                font-size: 0.7rem;
+                padding: 8px 6px;
+                font-size: 0.6rem;
                 letter-spacing: 1px;
                 background: transparent;
             }
 
-            /* Tap indicators positioned left/right */
-            .tap-indicator.plus {
-                left: 70% !important;
-            }
-
-            .tap-indicator.minus {
-                left: 30% !important;
+            /* Add space at bottom for footer */
+            .attacker-side .cp-section {
+                padding-bottom: 50px;
             }
         }
 
@@ -993,20 +991,31 @@
             saveState();
         }
 
-        // Track consecutive presses
+        // Track combined presses per player/type
         const tapTrackers = {};
 
-        // Show tap indicator with consecutive counting
+        // Show tap indicator with combined +/- counting
         function showTapIndicator(player, type, delta) {
-            const key = `${player}-${type}-${delta > 0 ? 'plus' : 'minus'}`;
+            const key = `${player}-${type}`;
             const section = document.querySelector(`#${player}-side .${type}-section`);
 
             // Check if there's an active indicator for this key
             if (tapTrackers[key] && tapTrackers[key].active) {
-                // Update existing indicator
-                tapTrackers[key].count += Math.abs(delta);
+                // Update existing indicator with combined count
+                tapTrackers[key].count += delta;
                 const indicator = tapTrackers[key].element;
-                indicator.textContent = delta > 0 ? `+${tapTrackers[key].count}` : `-${tapTrackers[key].count}`;
+
+                // Update display
+                if (tapTrackers[key].count === 0) {
+                    indicator.textContent = '0';
+                    indicator.className = 'tap-indicator show';
+                } else if (tapTrackers[key].count > 0) {
+                    indicator.textContent = `+${tapTrackers[key].count}`;
+                    indicator.className = 'tap-indicator plus show';
+                } else {
+                    indicator.textContent = `${tapTrackers[key].count}`;
+                    indicator.className = 'tap-indicator minus show';
+                }
 
                 // Reset the fade timer
                 clearTimeout(tapTrackers[key].fadeTimer);
@@ -1031,7 +1040,7 @@
 
                 tapTrackers[key] = {
                     active: true,
-                    count: 1,
+                    count: delta,
                     element: indicator,
                     fadeTimer: null,
                     removeTimer: null
