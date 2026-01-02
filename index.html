@@ -551,8 +551,9 @@
         /* History Modal */
         .history-modal {
             max-width: 90vw;
-            max-height: 80vh;
+            max-height: 70vh;
             overflow: hidden;
+            padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
         }
 
         .history-table-container {
@@ -613,6 +614,47 @@
             color: #666;
             padding: 30px;
             text-align: center;
+        }
+
+        /* Rotate device overlay for portrait mode on mobile */
+        .rotate-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(5, 5, 5, 0.98);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .rotate-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: rotate-hint 2s ease-in-out infinite;
+        }
+
+        @keyframes rotate-hint {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(90deg); }
+        }
+
+        .rotate-text {
+            color: #888;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        @media (max-width: 600px) and (orientation: portrait) {
+            .rotate-overlay {
+                display: flex;
+            }
         }
 
         /* Responsive - stack on mobile portrait */
@@ -737,9 +779,9 @@
                 bottom: 0;
                 left: 0;
                 right: 0;
-                padding: 6px 0;
-                padding-bottom: calc(6px + constant(safe-area-inset-bottom));
-                padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+                padding: 10px 0;
+                padding-bottom: calc(15px + constant(safe-area-inset-bottom));
+                padding-bottom: calc(15px + env(safe-area-inset-bottom, 0px));
                 background: linear-gradient(0deg,
                     rgba(20,20,20,0.95) 0%,
                     rgba(10,10,10,0.9) 100%);
@@ -749,8 +791,8 @@
             }
 
             .footer-btn {
-                padding: 8px 6px;
-                font-size: 0.6rem;
+                padding: 12px 8px;
+                font-size: 0.65rem;
                 letter-spacing: 1px;
                 background: transparent;
             }
@@ -1033,6 +1075,12 @@
 
     <!-- Fullscreen button -->
     <button class="fullscreen-btn" onclick="toggleFullscreen()">FS</button>
+
+    <!-- Rotate device overlay -->
+    <div class="rotate-overlay">
+        <div class="rotate-icon">📱</div>
+        <div class="rotate-text">Rotate device to landscape</div>
+    </div>
 
     <!-- Reset Confirmation Modal -->
     <div class="modal-overlay" id="resetModal">
