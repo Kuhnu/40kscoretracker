@@ -2,8 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>40K Score Tracker</title>
+
+    <!-- PWA / Add to Home Screen support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="40K Score">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#050505">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23111' width='100' height='100'/><text y='65' x='50' text-anchor='middle' font-size='40' fill='%23fff'>40K</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
@@ -846,6 +855,24 @@
         </div>
     </div>
 
+    <!-- iOS Fullscreen Instructions Modal -->
+    <div class="modal-overlay" id="iosModal">
+        <div class="modal">
+            <h2>Fullscreen on iOS</h2>
+            <p style="color: #888; margin-bottom: 20px; font-size: 0.9rem; line-height: 1.5;">
+                iOS doesn't support fullscreen.<br>
+                To get fullscreen, add this app to your home screen:
+            </p>
+            <ol style="color: #aaa; text-align: left; font-size: 0.8rem; line-height: 1.8; margin-bottom: 25px;">
+                <li>Tap the Share button (square with arrow)</li>
+                <li>Scroll down and tap "Add to Home Screen"</li>
+                <li>Tap "Add"</li>
+                <li>Open the app from your home screen</li>
+            </ol>
+            <button class="modal-btn cancel" onclick="hideIosModal()">OK</button>
+        </div>
+    </div>
+
     <script>
         // Game state
         let state = {
@@ -1009,9 +1036,40 @@
             updateDisplay();
         }
 
+        // Detect iOS
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+        // Check if running as standalone PWA
+        const isStandalone = window.navigator.standalone ||
+            window.matchMedia('(display-mode: standalone)').matches;
+
+        // Show iOS modal
+        function showIosModal() {
+            document.getElementById('iosModal').classList.add('active');
+        }
+
+        // Hide iOS modal
+        function hideIosModal() {
+            vibrate();
+            document.getElementById('iosModal').classList.remove('active');
+        }
+
         // Toggle fullscreen
         function toggleFullscreen() {
             vibrate();
+
+            // If iOS and not standalone, show instructions
+            if (isIOS && !isStandalone) {
+                showIosModal();
+                return;
+            }
+
+            // If already standalone on iOS, hide the button
+            if (isIOS && isStandalone) {
+                return;
+            }
+
             const elem = document.documentElement;
 
             const isFullscreen = document.fullscreenElement ||
@@ -1040,6 +1098,11 @@
                     document.msExitFullscreen();
                 }
             }
+        }
+
+        // Hide fullscreen button if already in standalone mode
+        if (isStandalone) {
+            document.querySelector('.fullscreen-btn').style.display = 'none';
         }
 
         // Update fullscreen button text
