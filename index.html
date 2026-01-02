@@ -51,6 +51,7 @@
         .header {
             background: linear-gradient(180deg, #151515 0%, var(--panel-color) 100%);
             padding: 8px 15px;
+            padding-top: calc(8px + constant(safe-area-inset-top));
             padding-top: calc(8px + env(safe-area-inset-top, 0px));
             display: flex;
             justify-content: center;
@@ -59,6 +60,7 @@
             position: relative;
             z-index: 10;
         }
+
 
         .round-container {
             display: flex;
@@ -430,6 +432,15 @@
             text-shadow: 0 0 20px var(--attacker-glow);
         }
 
+        /* Position +/- indicators on opposite sides */
+        .tap-indicator.plus {
+            left: 65% !important;
+        }
+
+        .tap-indicator.minus {
+            left: 35% !important;
+        }
+
         .footer-btn:active {
             background: linear-gradient(180deg, #333 0%, #222 100%);
             color: #999;
@@ -516,27 +527,47 @@
         /* Responsive - stack on mobile portrait */
         @media (max-width: 600px) {
             .header {
-                padding: 5px 10px;
+                position: absolute;
+                top: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 3px 10px;
+                padding-top: calc(3px + constant(safe-area-inset-top));
+                padding-top: calc(3px + env(safe-area-inset-top, 0px));
+                background: linear-gradient(180deg,
+                    rgba(20,20,20,0.85) 0%,
+                    rgba(10,10,10,0.8) 100%);
+                border: 1px solid rgba(255,255,255,0.1);
+                border-top: none;
+                border-radius: 0 0 8px 8px;
+                box-shadow: 0 3px 20px rgba(0,0,0,0.8);
+                z-index: 100;
             }
 
             .round-container {
-                padding: 5px 30px;
+                padding: 2px 20px;
+                background: transparent;
+                box-shadow: none;
             }
 
             .round-label {
-                font-size: 0.6rem;
+                font-size: 0.5rem;
+                letter-spacing: 2px;
             }
 
             .round-value {
-                font-size: 2.5rem;
+                font-size: 1.8rem;
             }
 
             .round-zone-indicator {
-                font-size: 1.2rem;
+                font-size: 1rem;
+                opacity: 0.4;
             }
 
             .scores-container {
                 flex-direction: column;
+                height: 100vh;
+                height: 100dvh;
             }
 
             /* Defender first (top) in portrait */
@@ -608,6 +639,38 @@
 
             .cp-section .score-label {
                 font-size: 0.7rem;
+            }
+
+            .footer {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 8px 0;
+                padding-bottom: calc(8px + constant(safe-area-inset-bottom));
+                padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+                background: linear-gradient(0deg,
+                    rgba(20,20,20,0.9) 0%,
+                    rgba(10,10,10,0.85) 100%);
+                border-top: 1px solid rgba(255,255,255,0.1);
+                box-shadow: 0 -3px 20px rgba(0,0,0,0.8);
+                z-index: 100;
+            }
+
+            .footer-btn {
+                padding: 10px 8px;
+                font-size: 0.7rem;
+                letter-spacing: 1px;
+                background: transparent;
+            }
+
+            /* Tap indicators positioned left/right */
+            .tap-indicator.plus {
+                left: 70% !important;
+            }
+
+            .tap-indicator.minus {
+                left: 30% !important;
             }
         }
 
@@ -959,7 +1022,7 @@
             } else {
                 // Create new indicator
                 const indicator = document.createElement('div');
-                indicator.className = 'tap-indicator';
+                indicator.className = `tap-indicator ${delta > 0 ? 'plus' : 'minus'}`;
                 indicator.textContent = delta > 0 ? `+1` : `-1`;
                 indicator.style.left = '50%';
                 indicator.style.top = '50%';
