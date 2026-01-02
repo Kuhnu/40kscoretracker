@@ -417,12 +417,12 @@
 
         .tap-indicator.show {
             opacity: 1;
-            transform: translateY(-20px);
+            transform: translate(-50%, -50%);
         }
 
         .tap-indicator.fade {
             opacity: 0;
-            transform: translateY(-40px);
+            transform: translate(-50%, -70%);
         }
 
         .defender-side .tap-indicator {
@@ -673,6 +673,17 @@
             .attacker-side .cp-section {
                 padding-bottom: 50px;
             }
+
+            /* Position tap indicators below numbers */
+            .tap-indicator {
+                top: 70% !important;
+                font-size: 1.5rem;
+            }
+
+            .cp-section .tap-indicator {
+                top: 75% !important;
+                font-size: 1.2rem;
+            }
         }
 
         @media (max-width: 400px) {
@@ -826,6 +837,17 @@
 
             .footer-btn:last-child {
                 border-right: none;
+            }
+
+            /* Tap indicators below numbers in landscape */
+            .tap-indicator {
+                top: 65% !important;
+                font-size: 1.3rem;
+            }
+
+            .cp-section .tap-indicator {
+                top: 70% !important;
+                font-size: 1rem;
             }
         }
     </style>
