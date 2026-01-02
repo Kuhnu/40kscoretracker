@@ -688,52 +688,27 @@
                 background: transparent;
             }
 
-            /* Move Defender VP label down to clear floating header */
-            .defender-side .vp-section .score-label {
-                top: 50px;
+            /* VP labels - both need clearance since either can be on top after switch */
+            .vp-section .score-label {
+                top: 55px;
             }
 
-            /* Adjust label positions for proper spacing */
-            .defender-side .cp-section .score-label {
-                top: 10px;
+            /* CP labels */
+            .cp-section .score-label {
+                top: 8px;
             }
 
-            .attacker-side .vp-section .score-label {
-                top: 15px;
-            }
-
-            .attacker-side .cp-section .score-label {
-                top: 10px;
-            }
-
-            /* Add space at bottom for footer */
-            .attacker-side .cp-section {
-                padding-bottom: 55px;
-            }
-
-            /* Center score values properly */
-            .score-value {
-                margin-top: 20px;
-            }
-
-            .cp-section .score-value {
-                margin-top: 15px;
-            }
-
-            /* Tap indicators at bottom of sections */
-            .tap-indicator {
+            /* Tap indicators in middle of sections */
+            .vp-section .tap-indicator {
                 top: auto !important;
-                bottom: 10px !important;
-                font-size: 1.5rem;
+                bottom: 15% !important;
+                font-size: 1.4rem;
             }
 
             .cp-section .tap-indicator {
-                bottom: 8px !important;
-                font-size: 1.2rem;
-            }
-
-            .attacker-side .cp-section .tap-indicator {
-                bottom: 55px !important;
+                top: auto !important;
+                bottom: 10% !important;
+                font-size: 1.1rem;
             }
         }
 
@@ -896,15 +871,16 @@
                 border-right: none;
             }
 
-            /* Tap indicators at bottom of sections in landscape */
-            .tap-indicator {
+            /* Tap indicators closer to numbers in landscape */
+            .vp-section .tap-indicator {
                 top: auto !important;
-                bottom: 10px !important;
+                bottom: 25% !important;
                 font-size: 1.3rem;
             }
 
             .cp-section .tap-indicator {
-                bottom: 35px !important;
+                top: auto !important;
+                bottom: 20% !important;
                 font-size: 1rem;
             }
         }
