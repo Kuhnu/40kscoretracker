@@ -932,15 +932,30 @@
                 top: 5px;
             }
 
-            .click-zone {
+            .score-clickable {
                 display: flex;
                 align-items: center;
                 justify-content: center;
             }
 
+            .click-zone {
+                position: static;
+            }
+
             .click-zone-indicator {
+                position: absolute;
                 font-size: 2rem;
                 opacity: 0.25;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+
+            .click-zone.decrease .click-zone-indicator {
+                left: 15%;
+            }
+
+            .click-zone.increase .click-zone-indicator {
+                right: 15%;
             }
 
             .player-side::before,
