@@ -811,7 +811,7 @@
 
             /* VP labels - both need clearance since either can be on top after switch */
             .vp-section .score-label {
-                top: 80px;
+                top: 100px;
             }
 
             /* CP labels */
@@ -1571,10 +1571,8 @@
             }
         }
 
-        // Hide fullscreen button if already in standalone mode
-        if (isStandalone) {
-            document.querySelector('.fullscreen-btn').style.display = 'none';
-        }
+        // Button visibility is now controlled by CSS media queries
+        // In mobile modes it shows as menu toggle, in desktop as fullscreen toggle
 
         // Update fullscreen button text
         function updateFullscreenBtn() {
