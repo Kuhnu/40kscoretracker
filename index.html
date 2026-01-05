@@ -916,46 +916,65 @@
 
             /* VP takes 2/3, CP takes 1/3 */
             .vp-section {
+                display: flex;
+                flex-direction: column;
                 justify-content: center;
-                padding-top: 15px;
+                align-items: center;
                 flex: 2;
+                padding: 10px 0;
             }
 
             .cp-section {
-                padding-bottom: 38px;
+                display: flex;
+                flex-direction: column;
                 justify-content: center;
-                padding-top: 0;
+                align-items: center;
                 flex: 1;
+                padding: 5px 0;
+            }
+
+            .score-label {
+                position: relative;
+                top: auto;
+                margin-bottom: 5px;
             }
 
             .cp-section .score-label {
-                top: -20px;
+                top: auto;
+                margin-bottom: 3px;
+            }
+
+            .score-value {
+                position: relative;
             }
 
             .score-clickable {
                 display: flex;
                 align-items: center;
-                justify-content: center;
+                justify-content: space-between;
+                padding: 0 10%;
             }
 
             .click-zone {
-                position: static;
+                flex: 1;
+                display: flex;
+                align-items: center;
+                height: 100%;
+            }
+
+            .click-zone.decrease {
+                justify-content: flex-start;
+                padding-left: 5%;
+            }
+
+            .click-zone.increase {
+                justify-content: flex-end;
+                padding-right: 5%;
             }
 
             .click-zone-indicator {
-                position: absolute;
                 font-size: 2rem;
                 opacity: 0.25;
-                top: 50%;
-                transform: translateY(-50%);
-            }
-
-            .click-zone.decrease .click-zone-indicator {
-                left: 15%;
-            }
-
-            .click-zone.increase .click-zone-indicator {
-                right: 15%;
             }
 
             .player-side::before,
