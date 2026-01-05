@@ -698,6 +698,7 @@
                 flex-direction: column;
                 height: 100vh;
                 height: 100dvh;
+                padding-top: 50px; /* Space for floating round counter */
             }
 
             /* Defender first (top) in portrait */
@@ -772,6 +773,7 @@
             }
 
             .footer {
+                display: none; /* Hidden by default */
                 position: absolute;
                 bottom: 0;
                 left: 0;
@@ -785,6 +787,16 @@
                 border-top: 1px solid rgba(255,255,255,0.15);
                 box-shadow: 0 -3px 20px rgba(0,0,0,0.8);
                 z-index: 100;
+            }
+
+            .footer.visible {
+                display: flex;
+            }
+
+            .fullscreen-btn {
+                display: flex !important;
+                top: 10px;
+                left: 10px;
             }
 
             .footer-btn {
@@ -1507,9 +1519,10 @@
         function toggleFullscreen() {
             vibrate();
 
-            // In mobile landscape mode, toggle footer visibility instead
+            // In mobile modes, toggle footer visibility instead
             const isLandscape = window.innerHeight < 500 && window.matchMedia('(orientation: landscape)').matches;
-            if (isLandscape) {
+            const isMobilePortrait = window.innerWidth <= 600 && window.innerHeight > window.innerWidth;
+            if (isLandscape || isMobilePortrait) {
                 document.querySelector('.footer').classList.toggle('visible');
                 return;
             }
@@ -1564,9 +1577,10 @@
         function updateFullscreenBtn() {
             const btn = document.querySelector('.fullscreen-btn');
             const isLandscape = window.innerHeight < 500 && window.matchMedia('(orientation: landscape)').matches;
+            const isMobilePortrait = window.innerWidth <= 600 && window.innerHeight > window.innerWidth;
 
-            // In landscape mode, always show menu icon
-            if (isLandscape) {
+            // In mobile modes, always show menu icon
+            if (isLandscape || isMobilePortrait) {
                 if (btn) btn.textContent = '☰';
                 return;
             }

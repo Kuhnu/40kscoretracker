@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v33';
+const CACHE_VERSION = 'v34';
 const CACHE_NAME = `40k-score-${CACHE_VERSION}`;
 
 // Install - cache new version
