@@ -997,6 +997,7 @@
             .attacker-side::after { right: 5px; }
 
             .footer {
+                display: none; /* Hidden by default in landscape */
                 position: absolute;
                 bottom: 0;
                 left: 0;
@@ -1009,6 +1010,15 @@
                 border-top: 1px solid rgba(255,255,255,0.1);
                 box-shadow: 0 -2px 15px rgba(0,0,0,0.8);
                 z-index: 100;
+            }
+
+            .footer.visible {
+                display: flex; /* Show when toggled */
+            }
+
+            .fullscreen-btn {
+                top: 10px;
+                left: 10px;
             }
 
             .footer-btn {
@@ -1492,9 +1502,16 @@
             document.getElementById('iosModal').classList.remove('active');
         }
 
-        // Toggle fullscreen
+        // Toggle fullscreen or footer menu
         function toggleFullscreen() {
             vibrate();
+
+            // In mobile landscape mode, toggle footer visibility instead
+            const isLandscape = window.innerHeight < 500 && window.matchMedia('(orientation: landscape)').matches;
+            if (isLandscape) {
+                document.querySelector('.footer').classList.toggle('visible');
+                return;
+            }
 
             // If iOS and not standalone, show instructions
             if (isIOS && !isStandalone) {
