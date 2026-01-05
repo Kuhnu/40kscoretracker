@@ -1130,7 +1130,7 @@
     </footer>
 
     <!-- Fullscreen button -->
-    <button class="fullscreen-btn" onclick="toggleFullscreen()">FS</button>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">☰</button>
 
     <!-- Landscape recommendation tooltip -->
     <div class="landscape-tooltip" id="landscapeTooltip">
@@ -1563,6 +1563,14 @@
         // Update fullscreen button text
         function updateFullscreenBtn() {
             const btn = document.querySelector('.fullscreen-btn');
+            const isLandscape = window.innerHeight < 500 && window.matchMedia('(orientation: landscape)').matches;
+
+            // In landscape mode, always show menu icon
+            if (isLandscape) {
+                if (btn) btn.textContent = '☰';
+                return;
+            }
+
             const isFullscreen = document.fullscreenElement ||
                 document.webkitFullscreenElement ||
                 document.mozFullScreenElement ||
